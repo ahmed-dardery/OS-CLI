@@ -6,11 +6,23 @@ public class Main {
     private static Scanner in = new Scanner(System.in);
 
     public static void main(String[] args) {
+        Terminal kernal = new Terminal();
+
         System.out.println("Currently in development phase...");
         String input;
-        do{
+        do {
+            System.out.print(kernal.getWorkingDirectory());
+            System.out.print(" : ");
+
             input = in.nextLine();
-            //Parser test();
-        }while(!input .equals("exit"));
+            Parser parser = new Parser();
+            try {
+                parser.tryParse(input);
+                kernal.exec(parser.getCmd(), parser.getArguments());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+        } while (!input.equals("exit"));
     }
 }

@@ -12,9 +12,17 @@ import java.util.regex.Pattern;
 public class Parser {
     private String[] args; // Will be filled by arguments extracted by parse method
     private String cmd; // Will be filled by the command extracted by parse method
+    private RedirectionType redirectionType;
+    private String redirectionFilename;
 
     enum PathType {
         SingleFile, MultipleFiles, Directory, Invalid
+    }
+
+    enum RedirectionType {
+        NoRedirection,
+        Append,
+        Truncate
     }
 
     // Returns true if it was able to parse user input correctly. Otherwise false
@@ -32,9 +40,17 @@ public class Parser {
         if (res.length > 2)
             throw new ParsingException("Cannot redirect output to multiple files.");
         if (res.length == 2) {
-            if (isParsable(res[1]) != PathType.SingleFile)
+            if (isFileOrDirectory(res[1]) != PathType.SingleFile)
                 throw new ParsingException(String.format("%s is not a valid file for redirection.", res[1]));
-        }
+
+            redirectionFilename = res[1];
+
+            if (input.contains(">>"))
+                redirectionType = RedirectionType.Append;
+            else
+                redirectionType = RedirectionType.Truncate;
+        } else
+            redirectionType = RedirectionType.NoRedirection;
 
         //TODO : do something with now res[1] contains redirections
         String[] data = splitInput(res[0]);
@@ -117,7 +133,7 @@ public class Parser {
                 return;
             case "more":
                 if (IdentifyPath(args[0]) != PathType.SingleFile)
-                    throw new ParsingException(String.format("%s is not a valid file", args[1]));
+                    throw new ParsingException(String.format("%s is not a valid file", args[0]));
 
                 return;
             case "mkdir":
@@ -143,7 +159,7 @@ public class Parser {
         return str.matches("(\\*|[^<>:\"/\\\\|?*\0]+)\\.(\\*|[^<>:\"/\\\\|?*\0]+)");
     }
 
-    private static PathType isParsable(String str) {
+    private static PathType isFileOrDirectory(String str) {
         try {
             Paths.get(str);
             File f = new File(str);
@@ -156,7 +172,7 @@ public class Parser {
 
     }
 
-    private static PathType IdentifyPath(String path) {
+    static PathType IdentifyPath(String path) {
         //Handles empty paths and paths between quotations
         if (path == null || path.length() == 0) return PathType.Invalid;
         char begin = path.charAt(0), end = path.charAt(path.length() - 1);
@@ -170,7 +186,7 @@ public class Parser {
 
         if (path.equals("~") || path.equals("..")) return PathType.Directory;
 
-        PathType initial = isParsable(path);
+        PathType initial = isFileOrDirectory(path);
         if (initial != PathType.Invalid) return initial;
 
         int nLastBackslash = path.lastIndexOf('\\');
@@ -178,7 +194,7 @@ public class Parser {
         String fileName = path.substring(nLastBackslash + 1);
         String directory = path.substring(0, nLastBackslash + 1);
 
-        if (isParsable(directory) != PathType.Invalid && isValidMultipleFiles(fileName))
+        if (isFileOrDirectory(directory) != PathType.Invalid && isValidMultipleFiles(fileName))
             return PathType.MultipleFiles;
         else
             return PathType.Invalid;
@@ -190,5 +206,13 @@ public class Parser {
 
     public String[] getArguments() {
         return args;
+    }
+
+    public RedirectionType getRedirectionType() {
+        return redirectionType;
+    }
+
+    public String getRedirectionFilename() {
+        return redirectionFilename;
     }
 }

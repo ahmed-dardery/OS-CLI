@@ -9,6 +9,7 @@ public class ParsingException extends Exception {
         message = msg;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }

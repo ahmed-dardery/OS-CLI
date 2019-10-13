@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="963bf413-364a-406d-8deb-9cdb076d4f77" name="Default Changelist" comment="updating parsing">
+    <list default="true" id="963bf413-364a-406d-8deb-9cdb076d4f77" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/TerminalException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.java" afterDir="false" />
@@ -36,6 +37,11 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.editor" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -75,8 +81,20 @@
       <updated>1570611977952</updated>
       <workItem from="1570611981205" duration="7376000" />
       <workItem from="1570801647380" duration="3657000" />
-      <workItem from="1570807019209" duration="8930000" />
+      <workItem from="1570807019209" duration="10214000" />
+      <workItem from="1570820166595" duration="203000" />
+      <workItem from="1570830130933" duration="815000" />
+      <workItem from="1570957940362" duration="7407000" />
+      <workItem from="1570976407757" duration="413000" />
     </task>
+    <task id="LOCAL-00001" summary="updating parsing">
+      <created>1570816030425</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1570816030426</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
