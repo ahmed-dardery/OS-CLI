@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="963bf413-364a-406d-8deb-9cdb076d4f77" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ConsoleColor.java" afterDir="false" />
+    <list default="true" id="963bf413-364a-406d-8deb-9cdb076d4f77" name="Default Changelist" comment="Fixed errors in parse&#10;Finished terminal class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.java" afterDir="false" />
@@ -32,6 +31,7 @@
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="TODO_SCOPE" value="All Places" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -124,6 +124,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="updating parsing" />
     <MESSAGE value="done some terminal processing WIP" />
-    <option name="LAST_COMMIT_MESSAGE" value="done some terminal processing WIP" />
+    <MESSAGE value="Fixed errors in parse&#10;Finished terminal class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed errors in parse&#10;Finished terminal class" />
   </component>
 </project>

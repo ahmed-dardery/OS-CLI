@@ -28,7 +28,7 @@ public class Parser {
     // to args and cmd variables
     // It should also print error messages in case of too few arguments for a commands
     // eg. “cp requires 2 arguments”
-    final static private List<String> supportedCommands = Arrays.asList("cp", "mv", "rm", "pwd", "cat", "cd", "mkdir", "rmdir", "more", "args", "date", "help");
+    final static private List<String> supportedCommands = Arrays.asList("cp", "mv", "rm", "pwd", "cat", "cd", "mkdir", "rmdir", "more", "args", "date", "help" , "clear");
 
     public static Parser[] parseUserInput(String input) throws ParsingException {
         String[] res = input.split("\\|");
@@ -108,6 +108,8 @@ public class Parser {
                 return;
 
             case "help":
+                if (args.length>1) throw new ParsingException(String.format("Command %s does not support %d arguments.", cmd, args.length));
+                return;
             case "args":
                 if (args.length != 1)
                     throw new ParsingException(String.format("Command %s does not support %d arguments.", cmd, args.length));

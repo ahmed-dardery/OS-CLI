@@ -1,36 +1,56 @@
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
-public class Terminal {
+
+class Terminal {
 
     private static final String homeDir = System.getProperty("user.dir");
     private String workingDir;
     private Scanner in;
     private PrintStream out;
+    private Map<String, String> commandsArgs = new HashMap<>();
 
-    public Terminal(InputStream input, PrintStream output) {
+    Terminal(InputStream input, PrintStream output) {
         this(homeDir, input, output);
     }
 
-    public Terminal(String workingDirectory, InputStream input, PrintStream output) {
+    private Terminal(String workingDirectory, InputStream input, PrintStream output) {
         workingDir = workingDirectory;
         in = new Scanner(input);
         out = output;
+
+        commandsArgs.put("cat","arg1: file arg2.n: files\nReads from and concatanate all files specified in the arguments.");
+        commandsArgs.put("cd","[arg1: new_dir]\nChanges current working directory to new_dir, if omitted changes it to Home Directory.");
+        commandsArgs.put("mkdir","arg1 : dir\nCreates an empty directory in path dir.");
+        commandsArgs.put("rmdir","arg1 : dir\nRemoves directory at path dir, directory should be empty.");
+        commandsArgs.put("more","arg1: file_path\nDisplays some of data in file_path, supports scrolling by Enter: next line, Space: one page, b: back one page.");
+        commandsArgs.put("date","no arguments\nPrints current system date and time.");
+        commandsArgs.put("args","arg1: argument\nDisplays arguments of the command specified in arg1.");
+        commandsArgs.put("help","[arg1: argument]\nDisplays info about arg1, if omitted displays info about all commands.");
+        commandsArgs.put("cp","arg1: file/dir arg2: file/dir\nCopies file/directory from arg1 to arg2.");
+        commandsArgs.put("mv","arg1: file/dir arg2: file/dir\nMoves file/directory from arg1 to arg2.");
+        commandsArgs.put("rm","arg1: file/Empty dir\nRemoves file/directory permanently.");
+        commandsArgs.put("pwd","no arguments\nDisplays the current working directory.");
+        commandsArgs.put("ls","[arg1: Directory]\nDisplays the files and subfolders in a directory , default: current working directory.");
+        commandsArgs.put("clear","no arguments\nClears the entire screen.");
+
     }
 
-    public String exec(Parser parser) throws IOException, TerminalException {
+    String exec(Parser parser) throws IOException, TerminalException {
         return exec(parser.getCmd(), parser.getArguments());
     }
 
-    public String exec(String cmd, String[] args) throws IOException, TerminalException {
+    private String exec(String cmd, String[] args) throws IOException, TerminalException {
         switch (cmd) {
             case "cp":
                 cp(args[0], args[1]);
@@ -82,24 +102,81 @@ public class Terminal {
         }
     }
 
-    private String arg(String arg) {
-        //TODO: implement args, check end of this file for my quick and dirty documentation.
-        return null;
+    private String help(String arg) throws TerminalException {
+        String ret = commandsArgs.get(arg);
+        if (ret == null) throw new TerminalException("Argument is not exist");
+        return ret;
     }
 
     private String help() {
-        //TODO: implement default help
-        return null;
+        String ret = "";
+        for (Map.Entry<String, String> entry : commandsArgs.entrySet()) {
+            ret+= (entry.getKey() + " -> " + entry.getValue() + "\n\n");
+        }
+        return ret.substring(0,ret.length()-2); // removes last 2 \n
     }
 
-    private String help(String arg) {
-        //TODO: implement help with argument
-        return null;
+    private String arg(String arg) throws TerminalException {
+        String command = help(arg);
+        String[] split = command.split("[\\r\\n]+");
+        return split[0];
     }
 
-    private void more(String arg) {
-        //TODO : implement more
-        //Tips: use 'out' and 'in' to your liking.
+    private void more(String arg) throws IOException, TerminalException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(getAbsolutePath(arg).toString()));
+        List<String> data = new ArrayList<>();
+        String s;
+        while ((s = bufferedReader.readLine()) != null) {
+            data.add(s);
+        }
+        bufferedReader.close();
+        final int pageSize = 50;
+        int lastLine = 0 , display = pageSize;
+        while (true) {
+            if (lastLine < data.size()) {
+                int toLine = min(display+lastLine,data.size());
+                for (int i = lastLine; i <toLine; ++i) {
+                    out.println(data.get(i));
+                }
+                lastLine = toLine;
+            }
+            out.printf("Displayed %.2f%% of text, Space: Display next page, Enter: Display next line, b: Display previous page , q : exit : ", ((float) (lastLine) / data.size() * 100));
+            String c = in.nextLine();
+//            if (c == ' '){
+//                display = pageSize;
+//            }
+//            else if (c == 'b'){
+//                display = pageSize;
+//                lastLine = max(0,lastLine-pageSize*2);
+//            }
+//            else if (c == '\n'){
+//                display = 1;
+//            }
+//            else if (c == 'q'){
+//                break;
+//            }
+//            else
+//                throw new TerminalException("Unsupported input for argument more");
+
+            if (c.equals(" ")){
+                display = pageSize;
+            }
+            else if (c.equals("b")){
+                display = pageSize;
+                lastLine = max(0,lastLine-pageSize*2);
+            }
+            else if (c.isEmpty()){
+                display = 1;
+            }
+            else if (c.equals("q")){
+                break;
+            }
+            else
+                throw new TerminalException("Unsupported input for argument more");
+
+        }
+
+
     }
 
     private Path getAbsolutePath(String pathString) {
@@ -120,7 +197,7 @@ public class Terminal {
         return getAbsolutePath(path.toString());
     }
 
-    public Path[] decompose(String path) throws TerminalException {
+    private Path[] decompose(String path) throws TerminalException {
         int nLastBackslash = path.lastIndexOf('\\');
 
         String fileName = path.substring(nLastBackslash + 1);
@@ -280,7 +357,7 @@ public class Terminal {
         return sb.toString();
     }
 
-    private String cat(String[] paths) throws IOException, TerminalException {
+    private String cat(String[] paths) throws IOException{
         Charset charset = StandardCharsets.UTF_8;
         StringBuilder sb = new StringBuilder();
         for (String path : paths) {
@@ -307,7 +384,7 @@ public class Terminal {
         return new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.ENGLISH).format(calendar.getTime().getTime());
     }
 
-    public String getWorkingDirectory() {
+    String getWorkingDirectory() {
         return workingDir;
     }
 }

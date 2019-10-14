@@ -12,25 +12,26 @@ public class Main {
     private static Scanner in = new Scanner(System.in);
 
     public static void main(String[] args) {
-        Terminal kernal = new Terminal(System.in, System.out);
+        Terminal kernel = new Terminal(System.in, System.out);
 
         System.out.println("Currently in development phase...");
         System.out.println("\033[H\033[2J");
 
         String input;
         do {
-            System.out.print(kernal.getWorkingDirectory());
+            System.out.print(kernel.getWorkingDirectory());
             System.out.print(" : ");
 
             input = in.nextLine();
             if (input.equals("clear")) {
-                //TODO : figure out how to do it: clear : clear the screen
+                // TODO find a better way for clear
+                for (int i = 0 ; i<100 ;++i) System.out.println();
                 continue;
             }
             try {
                 Parser[] parsers = Parser.parseUserInput(input);
                 for (Parser p : parsers) {
-                    String ret = kernal.exec(p);
+                    String ret = kernel.exec(p);
                     if (p.getRedirectionType() == Parser.RedirectionType.NoRedirection) {
                         if (p.getCmd().equals("ls")) {
                             ret = ret.replaceAll(":( [^\n]*(\n|$))", ConsoleColor.Colorify(ConsoleColor.ANSI.BLUE, "$1"));
