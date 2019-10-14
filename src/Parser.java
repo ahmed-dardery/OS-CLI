@@ -1,5 +1,3 @@
-//TODO: do all the todos
-
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -32,14 +30,32 @@ public class Parser {
     // eg. “cp requires 2 arguments”
     final static private List<String> supportedCommands = Arrays.asList("cp", "mv", "rm", "pwd", "cat", "cd", "mkdir", "rmdir", "more", "args", "date", "help");
 
-    public void tryParse(String input) throws ParsingException {
-        //TODO: Modify error messages to be as linux
-        //TODO: Handle pipes and redirection > >>
+    public static Parser[] parseUserInput(String input) throws ParsingException {
+        String[] res = input.split("\\|");
+        ArrayList<Parser> commands = new ArrayList<>();
+        for (String entry : res) {
+            commands.add(new Parser(entry));
+        }
+        return commands.toArray(new Parser[0]);
+    }
 
+    private Parser(String input) throws ParsingException {
+        input = input.trim();
+        if (input.length() == 0){
+            throw new ParsingException("");
+        }
         String[] res = input.split(">>|>");
+        //Split does not put trailing empty strings, so I need to check if the last character is >
+        if (input.charAt(input.length() - 1)=='>') {
+            throw new ParsingException("Invalid redirection syntax.");
+        }
+
+        res[0] = res[0].trim();
+
         if (res.length > 2)
             throw new ParsingException("Cannot redirect output to multiple files.");
         if (res.length == 2) {
+            res[1] = res[1].trim();
             if (isFileOrDirectory(res[1]) != PathType.SingleFile)
                 throw new ParsingException(String.format("%s is not a valid file for redirection.", res[1]));
 
@@ -52,7 +68,6 @@ public class Parser {
         } else
             redirectionType = RedirectionType.NoRedirection;
 
-        //TODO : do something with now res[1] contains redirections
         String[] data = splitInput(res[0]);
 
         if (data.length == 0 || data[0].length() == 0)
@@ -148,6 +163,12 @@ public class Parser {
                     if (IdentifyPath(item) != PathType.MultipleFiles && IdentifyPath(item) != PathType.SingleFile)
                         throw new ParsingException(String.format("%s is not a valid file", item));
                 }
+                return;
+            case "rm":
+                if (args.length != 1)
+                    throw new ParsingException("rm only supports 1 argument.");
+                if (IdentifyPath(args[0]) == PathType.Invalid)
+                    throw new ParsingException(String.format("%s is not a valid file", args[0]));
                 return;
             default:
                 throw new ParsingException(String.format("%s is not a valid command", cmd));

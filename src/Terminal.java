@@ -1,5 +1,3 @@
-import javax.sound.sampled.Line;
-import javax.swing.plaf.basic.BasicLookAndFeel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 
 public class Terminal {
@@ -22,7 +18,6 @@ public class Terminal {
 
     public Terminal(InputStream input, PrintStream output) {
         this(homeDir, input, output);
-
     }
 
     public Terminal(String workingDirectory, InputStream input, PrintStream output) {
@@ -31,18 +26,9 @@ public class Terminal {
         out = output;
     }
 
-    /*
-        * TODO: figure out how to do it: clear : clear the screen
-        ls : list files and directories in a path
-        mkdir : make directory
-        more/less :
-        cat
-        pipe
-        >
-        >>
-        args : display arguments of command
-        help
-    */
+    public String exec(Parser parser) throws IOException, TerminalException {
+        return exec(parser.getCmd(), parser.getArguments());
+    }
 
     public String exec(String cmd, String[] args) throws IOException, TerminalException {
         switch (cmd) {
@@ -68,8 +54,10 @@ public class Terminal {
                     cd(args[0]);
                 return "";
             case "cat":
-                //TODO: do fucking stuff
-                return cat(args);
+                if (args.length == 0)
+                    return cat();
+                else
+                    return cat(args);
             case "more":
                 more(args[0]);
                 return "";
@@ -94,6 +82,26 @@ public class Terminal {
         }
     }
 
+    private String arg(String arg) {
+        //TODO: implement args, check end of this file for my quick and dirty documentation.
+        return null;
+    }
+
+    private String help() {
+        //TODO: implement default help
+        return null;
+    }
+
+    private String help(String arg) {
+        //TODO: implement help with argument
+        return null;
+    }
+
+    private void more(String arg) {
+        //TODO : implement more
+        //Tips: use 'out' and 'in' to your liking.
+    }
+
     private Path getAbsolutePath(String pathString) {
         if (pathString.equals("~"))
             return Paths.get(homeDir);
@@ -112,21 +120,22 @@ public class Terminal {
         return getAbsolutePath(path.toString());
     }
 
-    private Path[] decompose(String path) throws TerminalException {
+    public Path[] decompose(String path) throws TerminalException {
         int nLastBackslash = path.lastIndexOf('\\');
 
         String fileName = path.substring(nLastBackslash + 1);
+        fileName = fileName.replaceAll("\\*", ".+");
         String directory = path.substring(0, nLastBackslash + 1);
         Path parent = getAbsolutePath(directory);
-        String[] ret = parent.toFile().list();
+        File[] ret = parent.toFile().listFiles();
         if (ret == null)
             throw new TerminalException("No files found.");
         else {
             List<Path> res = new ArrayList<>();
-            for (String cur : ret) {
-                Path current = Paths.get(cur);
-                if (!current.toFile().isDirectory() && current.getFileName().toString().matches(fileName)) {
-                    res.add(current);
+            for (File current : ret) {
+
+                if (!current.isDirectory() && current.toPath().getFileName().toString().matches(fileName)) {
+                    res.add(current.toPath());
                 }
             }
             if (res.size() == 0)
@@ -138,7 +147,7 @@ public class Terminal {
 
     private void cp(Path[] sourcePaths, Path destinationPath) throws IOException {
         for (Path cur : sourcePaths) {
-            Files.copy(getAbsolutePath(cur), getAbsolutePath(destinationPath), new StandardCopyOption[]{REPLACE_EXISTING});
+            Files.copy(getAbsolutePath(cur), getAbsolutePath(destinationPath), new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING});
         }
     }
 
@@ -163,8 +172,6 @@ public class Terminal {
         rm(sourcePath, true);
     }
 
-}
-
     private void rmdir(String dirName) throws IOException, TerminalException {
         rm(dirName, false);
     }
@@ -177,16 +184,27 @@ public class Terminal {
 
     private void rm(String sourcePath, boolean removeRecursively) throws IOException, TerminalException {
         Parser.PathType type = Parser.IdentifyPath(sourcePath);
-        if (type == Parser.PathType.MultipleFiles || type == Parser.PathType.SingleFile) {
+        Path src;
+        if (type == Parser.PathType.MultipleFiles) {
             rm(decompose(sourcePath));
+            return;
         } else {
-            File current = new File(sourcePath);
-            String[] files = current.list();
-            if (files == null) {
+            src = getAbsolutePath(sourcePath);
+        }
+
+        if (type == Parser.PathType.SingleFile) {
+            rm(new Path[]{src});
+        } else {
+            File current = src.toFile();
+            if (!current.isDirectory()) {
                 throw new TerminalException("Directory does not exist.");
             }
-            if (files.length == 0)
-                rm(new Path[]{Paths.get(sourcePath)});
+            File[] files = current.listFiles();
+
+            if (files == null || files.length == 0) {
+                rm(new Path[]{src});
+                return;
+            }
 
             if (!removeRecursively) {
                 out.println("This directory is not empty. Are you sure you want to remove this directory? (y/n)");
@@ -199,9 +217,10 @@ public class Terminal {
             }
 
             if (removeRecursively) {
-                for (String file : files) {
-                    rm(file, true);
+                for (File file : files) {
+                    rm(file.getPath(), true);
                 }
+                rm(new Path[]{src});
             }
         }
     }
@@ -211,14 +230,24 @@ public class Terminal {
     }
 
     private String ls(String sourcePath) throws TerminalException {
-        File[] directories = getAbsolutePath(sourcePath).toFile().listFiles();
-        if (directories == null)
-            throw new TerminalException("Directory does not exist.");
-
         List<String> names = new ArrayList<>();
-        for (File file : directories) {
-            names.add(file.getName());
+
+        if (Parser.IdentifyPath(sourcePath) == Parser.PathType.MultipleFiles) {
+            for (Path p : decompose(sourcePath)) {
+                names.add(p.toString());
+            }
+        } else {
+            File[] directories = getAbsolutePath(sourcePath).toFile().listFiles();
+            if (directories == null)
+                throw new TerminalException("Directory does not exist.");
+
+            for (File file : directories) {
+
+                names.add((file.isDirectory() ? ": " : " ") + file.getName());
+            }
         }
+
+
         return String.join("\n", names);
     }
 
@@ -238,24 +267,37 @@ public class Terminal {
     }
 
     private String cat() {
-        //TODO: read input from user and return it
+        out.println("Accepting input from user: (type '<stop>' to terminate)");
+        StringBuilder sb = new StringBuilder();
+        String currentLine;
+        while (true) {
+            currentLine = in.nextLine();
+            if (currentLine.equals("<stop>"))
+                break;
+            sb.append(currentLine);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
-    private String cat(Path[] paths) throws IOException {
-        File temp = new File("temp.txt");
+    private String cat(String[] paths) throws IOException, TerminalException {
         Charset charset = StandardCharsets.UTF_8;
-        for (Path file : paths) {
-            List<String> data = Files.readAllLines(file, charset);
-            Files.write(temp.toPath(), data, charset, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        StringBuilder sb = new StringBuilder();
+        for (String path : paths) {
+            List<String> data = Files.readAllLines(Paths.get(path), charset);
+            for (String line : data) {
+                sb.append(line);
+                sb.append('\n');
+            }
         }
-        // TODO: temp contains the output so think how to display it
+        return sb.toString();
     }
 
     private void cd(String newDir) throws TerminalException {
         Path abs = getAbsolutePath(newDir);
         File tester = abs.toFile();
         if (tester.isDirectory() && tester.exists())
-            workingDir = newDir;
+            workingDir = abs.toString();
         else
             throw new TerminalException("Directory does not exist.");
     }
@@ -268,5 +310,49 @@ public class Terminal {
     public String getWorkingDirectory() {
         return workingDir;
     }
-// Add any other required command in the same structure…..
 }
+
+/*
+final static private List<String> supportedCommands = Arrays.asList("cp", "mv", "rm", "pwd", "cat", "cd", "mkdir", "rmdir", "more", "args", "date", "help");
+
+Usage: cp arg1:source_path arg2:destination_path
+Copies one or more files from source_path to destination_path
+
+mv arg1:source_path arg2:destination_path
+Moves one or more files from source_path to destination_path
+
+rm arg1:file_path
+Removes one or more files specified by file_path
+
+pwd
+Prints current working directory
+
+cat
+Accepts input from user and prints it. Use >, or >> to redirect input to a file.
+
+-OR-
+
+cat arg1: file arg2.n: files
+Reads from and concatanate all files specified in the arguments.
+
+cd [arg1: new_dir]
+Changes current working directory to new_dir, if omitted changes it to Home Directory
+
+mkdir arg1 : dir
+Creates an empty directory in path dir
+
+rmdir arg1 : dir
+Removes directory at path dir, directory should be empty.
+
+more arg1: file_path
+Displays some of data in file_path, supports scrolling by Enter: next line, Space: one page, b: back one page.
+
+date
+Prints current system date and time.
+
+args arg1: argument
+Displays arguments of the command sepecified in arg1
+
+help [arg1: argument]
+Displays info about arg1, if omitted displays info about all commands.
+*/

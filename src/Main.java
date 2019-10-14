@@ -1,26 +1,54 @@
+//TODO: Modify error messages to be as linux
+//TODO: Modify console output to be like linux
+//TODO: use ConsoleColor to output colorful messages when appropriate (see catch block below)
+//TODO: finish rest of TODOs
+
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Main {
-    //clear, cd, ls, cp, mv, rm, mkdir, rmdir, cat, more, pwd.
-
     private static Scanner in = new Scanner(System.in);
 
     public static void main(String[] args) {
-        Terminal kernal = new Terminal();
+        Terminal kernal = new Terminal(System.in, System.out);
 
         System.out.println("Currently in development phase...");
+        System.out.println("\033[H\033[2J");
+
         String input;
         do {
             System.out.print(kernal.getWorkingDirectory());
             System.out.print(" : ");
 
             input = in.nextLine();
-            Parser parser = new Parser();
+            if (input.equals("clear")) {
+                //TODO : figure out how to do it: clear : clear the screen
+                continue;
+            }
             try {
-                parser.tryParse(input);
-                kernal.exec(parser.getCmd(), parser.getArguments());
+                Parser[] parsers = Parser.parseUserInput(input);
+                for (Parser p : parsers) {
+                    String ret = kernal.exec(p);
+                    if (p.getRedirectionType() == Parser.RedirectionType.NoRedirection) {
+                        if (p.getCmd().equals("ls")) {
+                            ret = ret.replaceAll(":( [^\n]*(\n|$))", ConsoleColor.Colorify(ConsoleColor.ANSI.BLUE, "$1"));
+                        }
+                        System.out.println(ret);
+                    } else {
+                        boolean append = p.getRedirectionType() == Parser.RedirectionType.Append;
+                        OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(p.getRedirectionFilename(), append), StandardCharsets.UTF_8);
+                        if (append)
+                            out.write('\n');
+                        out.write(ret);
+                        out.flush();
+                        out.close();
+                    }
+                }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println(ConsoleColor.Colorify(ConsoleColor.ANSI.RED, e.getMessage()));
+                e.printStackTrace();
             }
 
         } while (!input.equals("exit"));
