@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     private static Scanner in = new Scanner(System.in);
-
+    public static String stopApplicationMessage = "HALT";
     public static void main(String[] args) {
         Terminal kernel = new Terminal(System.in, System.out);
 
@@ -49,7 +49,7 @@ public class Main {
                     }
                 }
             } catch (Exception e) {
-                if (e.getMessage().equals(Terminal.stopApplicationMessage)) break;
+                if (e.getMessage().equals(stopApplicationMessage)) break;
                 System.out.println(ConsoleColor.Colorify(ConsoleColor.ANSI.RED, e.getMessage()));
                 e.printStackTrace();
             }

@@ -19,7 +19,6 @@ class Terminal {
     private Scanner in;
     private PrintStream out;
     private Map<String, String> commandsArgs = new HashMap<>();
-    public static String stopApplicationMessage = "HALT";
 
     Terminal(InputStream input, PrintStream output) {
         this(homeDir, input, output);
@@ -103,7 +102,7 @@ class Terminal {
                 else
                     return ls(args[0]);
             case "exit":
-                throw new TerminalException(stopApplicationMessage);
+                throw new TerminalException(Main.stopApplicationMessage);
             default:
                 return "Should never be here.";
         }
