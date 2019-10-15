@@ -4,7 +4,6 @@
     <list default="true" id="963bf413-364a-406d-8deb-9cdb076d4f77" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Terminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Terminal.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -87,7 +86,7 @@
       <workItem from="1570976407757" duration="640000" />
       <workItem from="1571003839495" duration="5000" />
       <workItem from="1571061455062" duration="8879000" />
-      <workItem from="1571113992765" duration="3087000" />
+      <workItem from="1571113992765" duration="3815000" />
     </task>
     <task id="LOCAL-00001" summary="updating parsing">
       <created>1570816030425</created>
@@ -117,7 +116,14 @@
       <option name="project" value="LOCAL" />
       <updated>1571136516077</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed exit command bug">
+      <created>1571138996044</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1571138996044</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -141,6 +147,7 @@
     <MESSAGE value="done some terminal processing WIP" />
     <MESSAGE value="Fixed errors in parse&#10;Finished terminal class" />
     <MESSAGE value="Added exit command and added args command without no arguments" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added exit command and added args command without no arguments" />
+    <MESSAGE value="Fixed exit command bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed exit command bug" />
   </component>
 </project>

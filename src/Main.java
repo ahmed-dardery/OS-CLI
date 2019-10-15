@@ -49,7 +49,7 @@ public class Main {
                     }
                 }
             } catch (Exception e) {
-                if (e.getMessage() == "HALT") break;
+                if (e.getMessage().equals(Terminal.stopApplicationMessage)) break;
                 System.out.println(ConsoleColor.Colorify(ConsoleColor.ANSI.RED, e.getMessage()));
                 e.printStackTrace();
             }
