@@ -35,7 +35,7 @@ class Terminal {
         commandsArgs.put("rmdir","arg1 : dir\nRemoves directory at path dir, directory should be empty.");
         commandsArgs.put("more","arg1: file_path\nDisplays some of data in file_path, supports scrolling by Enter: next line, Space: one page, b: back one page.");
         commandsArgs.put("date","no arguments\nPrints current system date and time.");
-        commandsArgs.put("args","arg1: argument\nDisplays arguments of the command specified in arg1.");
+        commandsArgs.put("args","[arg1: argument]\nDisplays arguments of the command specified in arg1.");
         commandsArgs.put("help","[arg1: argument]\nDisplays info about arg1, if omitted displays info about all commands.");
         commandsArgs.put("cp","arg1: file/dir arg2: file/dir\nCopies file/directory from arg1 to arg2.");
         commandsArgs.put("mv","arg1: file/dir arg2: file/dir\nMoves file/directory from arg1 to arg2.");
@@ -89,7 +89,10 @@ class Terminal {
                 else
                     return help(args[0]);
             case "args":
-                return arg(args[0]);
+                if (args.length == 0)
+                    return arg();
+                else
+                    return arg(args[0]);
             case "date":
                 return date();
             case "ls":
@@ -120,6 +123,12 @@ class Terminal {
         String command = help(arg);
         String[] split = command.split("[\\r\\n]+");
         return split[0];
+    }
+    private String arg() {
+        String[] data = help().split("[\\r\\n]+");
+        String ret = "";
+        for (int i = 0 ; i<data.length ; i+=2) ret+=(data[i]+"\n");
+        return ret ;
     }
 
     private void more(String arg) throws IOException, TerminalException {

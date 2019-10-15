@@ -28,6 +28,7 @@ public class Main {
                 for (int i = 0 ; i<100 ;++i) System.out.println();
                 continue;
             }
+            else if (input.equals("exit")) break;
             try {
                 Parser[] parsers = Parser.parseUserInput(input);
                 for (Parser p : parsers) {
