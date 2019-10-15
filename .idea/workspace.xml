@@ -87,7 +87,7 @@
       <workItem from="1570976407757" duration="640000" />
       <workItem from="1571003839495" duration="5000" />
       <workItem from="1571061455062" duration="8879000" />
-      <workItem from="1571113992765" duration="1874000" />
+      <workItem from="1571113992765" duration="3087000" />
     </task>
     <task id="LOCAL-00001" summary="updating parsing">
       <created>1570816030425</created>
@@ -110,7 +110,14 @@
       <option name="project" value="LOCAL" />
       <updated>1571089000668</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added exit command and added args command without no arguments">
+      <created>1571136516077</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1571136516077</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -133,6 +140,7 @@
     <MESSAGE value="updating parsing" />
     <MESSAGE value="done some terminal processing WIP" />
     <MESSAGE value="Fixed errors in parse&#10;Finished terminal class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed errors in parse&#10;Finished terminal class" />
+    <MESSAGE value="Added exit command and added args command without no arguments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added exit command and added args command without no arguments" />
   </component>
 </project>

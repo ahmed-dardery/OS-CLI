@@ -43,6 +43,7 @@ class Terminal {
         commandsArgs.put("pwd","no arguments\nDisplays the current working directory.");
         commandsArgs.put("ls","[arg1: Directory]\nDisplays the files and subfolders in a directory , default: current working directory.");
         commandsArgs.put("clear","no arguments\nClears the entire screen.");
+        commandsArgs.put("exit","no arguments\nStops all application.");
 
     }
 
@@ -100,6 +101,8 @@ class Terminal {
                     return ls();
                 else
                     return ls(args[0]);
+            case "exit":
+                throw new TerminalException("HALT");
             default:
                 return "Should never be here.";
         }

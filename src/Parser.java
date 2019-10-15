@@ -172,6 +172,9 @@ public class Parser {
                 if (IdentifyPath(args[0]) == PathType.Invalid)
                     throw new ParsingException(String.format("%s is not a valid file", args[0]));
                 return;
+            case "exit":
+                if (args.length>0)  throw new ParsingException(String.format("Command %s does not support %d arguments.", cmd, args.length));
+                return;
             default:
                 throw new ParsingException(String.format("%s is not a valid command", cmd));
         }
