@@ -125,7 +125,7 @@ public class Parser {
                 return;
             case "cd":
                 if (args.length == 0)
-                    args = new String[]{Main.workingDir};
+                    args = new String[]{Main.homeDir};
                 if (args.length > 1)
                     throw new ParsingException(String.format("%s: too many arguments.", cmd));
                 return;
@@ -197,7 +197,10 @@ public class Parser {
         int nLastBackslash = path.lastIndexOf('\\');
 
         String fileName = path.substring(nLastBackslash + 1);
+        fileName = fileName.replaceAll("\\.", "\\\\.");
         fileName = fileName.replaceAll("\\*", ".*");
+
+
         String directory = path.substring(0, nLastBackslash + 1);
         Path parent = Paths.get(getAbsolutePath(directory));
         File[] ret = parent.toFile().listFiles();

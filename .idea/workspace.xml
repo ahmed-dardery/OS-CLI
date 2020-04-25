@@ -88,6 +88,9 @@
       <workItem from="1571003839495" duration="5000" />
       <workItem from="1571061455062" duration="8879000" />
       <workItem from="1571113992765" duration="4255000" />
+      <workItem from="1572254082355" duration="913000" />
+      <workItem from="1572260185165" duration="2914000" />
+      <workItem from="1572341813919" duration="17000" />
     </task>
     <task id="LOCAL-00001" summary="updating parsing">
       <created>1570816030425</created>
@@ -131,7 +134,14 @@
       <option name="project" value="LOCAL" />
       <updated>1571139905672</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="complete revamp of the parser vs terminal structure">
+      <created>1571704745122</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1571704745122</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +167,7 @@
     <MESSAGE value="Added exit command and added args command without no arguments" />
     <MESSAGE value="Fixed exit command bug" />
     <MESSAGE value="Fixed exit command bug and assigned a static halting message for the application" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed exit command bug and assigned a static halting message for the application" />
+    <MESSAGE value="complete revamp of the parser vs terminal structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="complete revamp of the parser vs terminal structure" />
   </component>
 </project>

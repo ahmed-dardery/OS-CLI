@@ -161,6 +161,7 @@ class Terminal {
 
     private void more(String arg) throws TerminalException {
         try {
+
             List<String> data = Files.readAllLines(Paths.get(arg));
             moreText(data.toArray(new String[0]));
         } catch (IOException ex) {
@@ -168,41 +169,42 @@ class Terminal {
         }
     }
 
-    private void cp(Path sourcePath, Path destinationPath) throws TerminalException {
+    private void cp(Path sourcePath, Path destinationPath, String cmd) throws TerminalException {
         Path dest = destinationPath;
         //if no filename is given, but is needed, put it.
         if (destinationPath.toFile().isDirectory())
             dest = destinationPath.resolve(sourcePath.getFileName());
 
         if (sourcePath.toFile().isDirectory()) {
-            //TODO: recurse
-            System.out.println(String.format("cp: Directory %s was ignored.", sourcePath.getFileName()));
+            System.out.println(String.format("%s: Directory %s was ignored.", cmd, sourcePath.getFileName()));
         } else if (sourcePath.toFile().isFile()) {
             try {
                 Files.copy(sourcePath, dest, new StandardCopyOption[]{StandardCopyOption.REPLACE_EXISTING});
             } catch (Exception ignored) {
-                throw new TerminalException(String.format("cp: cannot copy %s: IO error", sourcePath.getFileName()));
+                throw new TerminalException(String.format("%s: cannot copy %s: IO error", cmd, sourcePath.getFileName()));
             }
         } else {
-            throw new TerminalException(String.format("cp: cannot copy %s, no such file or directory.", sourcePath.getFileName()));
+            throw new TerminalException(String.format("%s: cannot copy %s, no such file or directory.", cmd, sourcePath.getFileName()));
         }
     }
 
     private void cp(String[] args) throws TerminalException {
+        cp(args, "cp");
+    }
+
+    private void cp(String[] args, String cmd) throws TerminalException {
         Path destinationDir = Paths.get(args[args.length - 1]);
 
         if (args.length > 2 && !destinationDir.toFile().isDirectory()) {
-            throw new TerminalException(String.format("cp: target %s is not a directory.", destinationDir.getFileName()));
-        } else if (args.length == 2) {
-            cp(Paths.get(args[0]), Paths.get(args[1]));
+            throw new TerminalException(String.format("%s: target %s is not a directory.", cmd, destinationDir.getFileName()));
         }
         for (int i = 0; i < args.length - 1; ++i) {
-            cp(Paths.get(args[i]), destinationDir);
+            cp(Paths.get(args[i]), destinationDir, cmd);
         }
     }
 
     private void mv(String[] args) throws TerminalException {
-        cp(args);
+        cp(args, "mv");
         try {
             rm(Arrays.copyOfRange(args, 0, args.length - 1));
         } catch (Exception ignored) {
