@@ -17,8 +17,6 @@ public class Main {
     public static void main(String[] args) {
         Terminal kernel = new Terminal(System.in, System.out);
 
-        System.out.println("Currently in development phase...");
-
         String input;
         do {
             System.out.print(ConsoleColor.Colorify(ConsoleColor.ANSI.GREEN, System.getProperty("user.name")));
